@@ -14,7 +14,7 @@ Compass:
   WmmFile: resources/WMM2020.COF
 Flask:
   Debug: true
-  Port: 80
+  Port: 8080
 Functions:
   Enabled:
     - AutoPilot

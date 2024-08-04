@@ -6,13 +6,8 @@ from math import radians, cos, sin, asin, sqrt, pi, atan2, degrees
 from pynmea2 import HDM
 from requests import get
 from geomag import geomag
-
-try:
-    import board
-    import adafruit_lsm303dlh_mag
-    import adafruit_lsm303_accel
-except:
-    None
+import smbus
+import lsm303
 
 
 class Compass:
@@ -21,9 +16,14 @@ class Compass:
         self.main = main
         self.logger.info("Loading mock compass")
 
-        self.i2c = board.I2C()  # uses board.SCL and board.SDA
-        self.accel = adafruit_lsm303_accel.LSM303_Accel(self.i2c)
-        self.mag = adafruit_lsm303dlh_mag.LSM303DLH_Mag(self.i2c)
+
+        self.bus = smbus.SMBus(self.main.config.get("Compass/Gy511I2cBusNumber"))
+        self.device = lsm303.LSM303(self.bus)
+
+        # Returns x,y,z tuple with values in degrees/second
+        self.accel = self.device.read_accel()
+        # Returns x,y,z tuple with values in microtesla
+        self.mag = self.device.read_mag()
 
         wmm_path = self.main.config.get("Compass/WmmFile", False)
         if wmm_path != False:
@@ -95,12 +95,12 @@ class Compass:
         return angle
 
     def get_heading(self):
-        magnet_x, magnet_y, _ = self.mag.magnetic
+        magnet_x, magnet_y, _ = self.device.read_mag()
         return self.vector_2_degrees(magnet_x, magnet_y)
 
     def get_compensated_heading(self):
 
-        accRaw = self.accel.acceleration
+        accRaw = self.device.read_accel()
         accXnorm = accRaw[0] / sqrt(
             accRaw[0] * accRaw[0] + accRaw[1] * accRaw[1] + accRaw[2] * accRaw[2]
         )
@@ -110,7 +110,7 @@ class Compass:
         pitch = asin(accXnorm)
         roll = -asin(accYnorm / cos(pitch))
         mag_raw = self.get_heading()
-        mag_x, mag_y, mag_z = self.mag.magnetic
+        mag_x, mag_y, mag_z = self.device.read_mag()
         magXcomp = mag_x * cos(pitch) + mag_z * sin(pitch)
         magYcomp = mag_x * sin(roll) * sin(pitch) + mag_y * cos(roll)
         magYcomp = magYcomp - mag_z * sin(roll) * cos(pitch)
@@ -161,8 +161,8 @@ class Compass:
         while time() < time() + duration:
             start = time()
 
-            acc = self.accel.acceleration
-            mag = self.mag.magnetic
+            acc = self.device.read_accel()
+            mag = self.device.read_mag()
             if self.cal != None:
                 cal = self.adjust(acc, mag)
                 mag_x, mag_y, mag_z = cal[0]
@@ -183,8 +183,8 @@ class Compass:
 
         self.logger.info("Reading accelerometer")
         while time() < time() + duration:
-            acc = self.accel.acceleration
-            mag = self.mag.magnetic
+            acc = self.device.read_accel()
+            mag = self.device.read_mag()
             mag_x, mag_y, mag_z = mag
             acc_x, acc_y, acc_z = acc
 

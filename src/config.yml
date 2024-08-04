@@ -27,6 +27,7 @@ Devices:
     - Steering
     - Controller
     - NmeaNet
+    - Compass
 History:
   MaxItems: 100
 Logging:

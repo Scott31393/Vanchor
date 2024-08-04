@@ -152,15 +152,16 @@ class Compass:
     def calibrate(self, duration=15):
         self.logger.info("Starting calibration")
         self.is_calibrating = True
+
         mag_min = (32767, 32767, 32767)
         mag_max = (-32768, -32768, -32768)
         acc_min = (32767, 32767, 32767)
         acc_max = (-32768, -32768, -32768)
 
         self.logger.info("Reading magnetometer")
-        while time() < time() + duration:
-            start = time()
 
+        start_time = time()
+        while (time() < start_time + duration):
             acc = self.device.read_accel()
             mag = self.device.read_mag()
             if self.cal != None:
@@ -174,15 +175,14 @@ class Compass:
             mag_min = tuple(map(lambda x, y: min(x, y), mag_min, mag))
             mag_max = tuple(map(lambda x, y: max(x, y), mag_max, mag))
 
-            self.logger.info(
-                "Mag x,y,z:{},{},{} mag_min,mag_max={},{}".format(
-                    mag_x, mag_y, mag_z, mag_min, mag_max
-                )
-            )
-            sleep(0.05)
+            self.logger.info("Mag x,y,z:{},{},{} mag_min,mag_max={},{}".format(
+                             mag_x, mag_y, mag_z, mag_min, mag_max))
+            # Wait 1/10th of a second and repeat.
+            sleep(0.1)
 
         self.logger.info("Reading accelerometer")
-        while time() < time() + duration:
+        start_time = time()
+        while (time() < start_time + duration):
             acc = self.device.read_accel()
             mag = self.device.read_mag()
             mag_x, mag_y, mag_z = mag
@@ -191,28 +191,30 @@ class Compass:
             acc_min = tuple(map(lambda x, y: min(x, y), acc_min, acc))
             acc_max = tuple(map(lambda x, y: max(x, y), acc_max, acc))
 
-            self.logger.info(
-                "Acc x,y,z:{},{},{} acc_min,acc_max={},{}".format(
-                    acc_x, acc_y, acc_z, acc_min, acc_max
-                )
-            )
-            sleep(0.05)
+            self.logger.info("Acc x,y,z:{},{},{} acc_min,acc_max={},{}".format(
+                             acc_x, acc_y, acc_z, acc_min, acc_max))
+            # Wait 1/10th of a second and repeat.
+            sleep(0.1)
 
         self.logger.info("Calculating calibration values")
         mag_offset = tuple(map(lambda x1, x2: (x1 + x2) / 2.0, mag_min, mag_max))
         avg_mag_delta = tuple(map(lambda x1, x2: (x2 - x1) / 2.0, mag_min, mag_max))
+
         combined_avg_mag_delta = (
             avg_mag_delta[0] + avg_mag_delta[1] + avg_mag_delta[2]
         ) / 3.0
+
         scale_mag_x = combined_avg_mag_delta / avg_mag_delta[0]
         scale_mag_y = combined_avg_mag_delta / avg_mag_delta[1]
         scale_mag_z = combined_avg_mag_delta / avg_mag_delta[2]
 
         acc_offset = tuple(map(lambda x1, x2: (x1 + x2) / 2.0, acc_min, acc_max))
         avg_acc_delta = tuple(map(lambda x1, x2: (x2 - x1) / 2.0, acc_min, acc_max))
+
         combined_avg_acc_delta = (
             avg_acc_delta[0] + avg_acc_delta[1] + avg_acc_delta[2]
         ) / 3.0
+
         scale_acc_x = combined_avg_acc_delta / avg_acc_delta[0]
         scale_acc_y = combined_avg_acc_delta / avg_acc_delta[1]
         scale_acc_z = combined_avg_acc_delta / avg_acc_delta[2]
@@ -224,9 +226,9 @@ class Compass:
         calibration_dict["scale_mag_x"] = scale_mag_x
         calibration_dict["scale_mag_y"] = scale_mag_y
         calibration_dict["scale_mag_z"] = scale_mag_z
-        calibration_dict["acc_offset_x"] = acc_offset_[0]
-        calibration_dict["acc_offset_y"] = acc_offset_[1]
-        calibration_dict["acc_offset_z"] = acc_offset_[2]
+        calibration_dict["acc_offset_x"] = acc_offset[0]
+        calibration_dict["acc_offset_y"] = acc_offset[1]
+        calibration_dict["acc_offset_z"] = acc_offset[2]
         calibration_dict["scale_acc_x"] = scale_acc_x
         calibration_dict["scale_acc_y"] = scale_acc_y
         calibration_dict["scale_acc_z"] = scale_acc_z

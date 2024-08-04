@@ -96,4 +96,5 @@ $('#setStepperPosAsZero').on('click', function(event) {
 $('#calibrateCompass').on('click', function(event) {
     sendEvent('compass.calibrate', 15)
     notify("Calibrating compass, this takes aprox. 30 seconds")
+    notify("Move the sensor slowly during calibration!!")
 })

@@ -6,6 +6,7 @@ AutoPilot:
   PidOffsetLimitMin: -90
   ArrivalCircleRadius: 10
 Compass:
+  Gy511I2cBusNumber: 4
   HeadingHistoryLength: 10 # Amount of datapoints to average heading to. Removes jitter
   UpdateInterval: 10 # Time between polls
   SendInterval: 10 # Every # cycles

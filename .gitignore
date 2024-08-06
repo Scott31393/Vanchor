@@ -9,3 +9,4 @@ pilot.pymitter
 __pycache__
 src/geomag
 src/geomag/**
+zephyr/build

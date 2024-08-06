@@ -19,6 +19,7 @@ class Controller:
 
         sleep(0.25)
         self.last_command = ""
+        self.last_msg = ""
         self.emitter.emit("status.set", ["Controller", {}])
         self.emitter.emit("controller.initialized")
 
@@ -124,7 +125,6 @@ class Controller:
                     self.logger.error("Error reading controller serial input: {}".format(e))
 
     def command_stream_worker(self, main, **kwargs):
-
         step = self.main.data.get("Stepper/Step")
         speed = self.main.config.get("Stepper/Speed")
         acceleration = self.main.config.get("Stepper/Acceleration")
@@ -133,7 +133,9 @@ class Controller:
 
         msg = f"UPD {step} {speed} {acceleration} {motor_speed} {motor_rev}"
 
-        if self.queue.qsize() < 10:
-            self.queue.put([time(), msg])
-        else:
-            self.logger.error("Queue is full")
+        if (self.last_msg != msg):
+            if self.queue.qsize() < 10:
+                self.queue.put([time(), msg])
+            else:
+                self.logger.error("Queue is full")
+            self.last_msg = msg

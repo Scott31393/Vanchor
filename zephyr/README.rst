@@ -1,39 +1,25 @@
-.. zephyr:code-sample:: usb-cdc-acm
-   :name: USB CDC-ACM
-   :relevant-api: usbd_api _usb_device_core_api uart_interface
+Vanchor Motors Controller
+=======
 
-   Use USB CDC-ACM driver to implement a serial port echo.
+Zephyr porting of the [TrollingMotorController](https://github.com/Scott31393/Vanchor/tree/main/arduino/TrollingMotorController)
+in this way we are more flexibles in therms of board/MCU supported by the project for
+the motors controller. For testing we are using [STM32F103C8T6 - stm32 blue pill](https://docs.zephyrproject.org/latest/boards/others/stm32_min_dev/doc/index.html).
+Also we are using the following Zephyr patches for the gpio stepper controller API:
 
-Overview
-********
+ - https://github.com/ZEISS/zephyr/commit/3ed2c9396133a40c8f1060c697b180ca0e53c9dd
+ - https://github.com/ZEISS/zephyr/commit/1d9b510a172716c71fde37fba198ffbb343149cb
 
-This sample app demonstrates use of a USB Communication Device Class (CDC)
-Abstract Control Model (ACM) driver provided by the Zephyr project.
-Received data from the serial port is echoed back to the same port
-provided by this driver.
-This sample can be found under :zephyr_file:`samples/subsys/usb/cdc_acm` in the
-Zephyr project tree.
+Build the project using:
 
-Requirements
-************
+.. code-block:: console
 
-This project requires an USB device driver, which is available for multiple
-boards supported in Zephyr.
+   source ~/work/proj-zephyr/zephyrproject/zephyr/zephyr-env.sh
+   source ~/work/proj-zephyr/.venv/bin/activate
 
-Building and Running
-********************
+   west build -b stm32_min_dev -p
+   west flash
 
-Reel Board
-===========
-
-To see the console output of the app, open a serial port emulator and
-attach it to the USB to TTL Serial cable. Build and flash the project:
-
-.. zephyr-app-commands::
-   :zephyr-app: samples/subsys/usb/cdc_acm
-   :board: reel_board
-   :goals: flash
-   :compact:
+.. code-block:: console
 
 Running
 =======

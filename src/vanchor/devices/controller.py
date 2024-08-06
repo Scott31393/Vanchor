@@ -105,21 +105,20 @@ class Controller:
     def input_listener(self, main):
         if self.main.debug != True:
             if self.serial.in_waiting > 0:
-                reading = ""
                 try:
-                    reading = self.serial.readline()
-                    reading = str(reading).replace("\r\n", "")
-                    if reading.startswith("STATUS "):
-                        self.emitter.emit("controller.status.reading", reading)
-                    else:
-                        # Ignore
-                        None
-                        # self.emitter.emit("controller.reading", reading)
+                    data = self.serial.read(self.serial.in_waiting)
+                    data = data.decode('utf-8').strip()
+                    # Split the data into lines and process each line
+                    lines = data.splitlines()
+                    for line in lines:
+                        if line.startswith("STATUS "):
+                            self.emitter.emit("controller.status.reading", line)
+                        else:
+                            # Optionally handle other data
+                            pass
 
                 except Exception as e:
-                    self.logger.error(
-                        "Error reading controller serial input: {}".format(reading), e
-                    )
+                    self.logger.error("Error reading controller serial input: {}".format(e))
 
     def command_stream_worker(self, main, **kwargs):
 

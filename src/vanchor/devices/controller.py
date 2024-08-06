@@ -85,8 +85,11 @@ class Controller:
     def controller_status_reading(self, reading):
         values = re.findall("[^ ]+:[^ $]+", reading)
         d = {}
-        for x in re.findall("[^ ]+:[^ $]+", values):
-            d[x.split(":")[0]] = x.split(":")[1]
+        for entry in values:
+            # Ensure entry is a string and matches the expected format
+            if isinstance(entry, str) and re.match(r"[^ ]+:[^ $]+", entry):
+                key, val = entry.split(":", 1)  # Split only on the first occurrence of ":"
+                d[key] = val
 
         self.emitter.emit(
             "status.set.stepper.realposition", ["Stepper/RealPosition", d["SSP"]]

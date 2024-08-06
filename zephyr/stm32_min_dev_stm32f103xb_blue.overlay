@@ -1,0 +1,81 @@
+/*
+ * Copyright (c) 2017, embedjournal.com
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	model = "STM32 Minimum Development Board (Blue)";
+	compatible = "stm32_min_dev_blue", "st,stm32f103c8";
+
+	aliases {
+		pa8-pwm1 = &pa8_pwm1;
+		pa0-pwm2 = &pa0_pwm2;
+		stepper = &stepper;
+	};
+
+	chosen {
+		zephyr,console = &usart3;
+		zephyr,shell-uart = &usart3;
+	};
+
+	stepper: stepper {
+		compatible = "gpio-stepper";
+		status = "okay";
+		gpios = <&gpiob 12 GPIO_ACTIVE_HIGH>,
+			<&gpiob 13 GPIO_ACTIVE_HIGH>,
+			<&gpiob 14 GPIO_ACTIVE_HIGH>,
+			<&gpiob 15 GPIO_ACTIVE_HIGH>;
+	};
+
+	pa8_pwm1: pa8_pwm1 {
+		compatible = "pwm-servo";
+		pwms = <&pwm1 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		min-pulse = <PWM_USEC(700)>;
+		max-pulse = <PWM_USEC(2500)>;
+	};
+
+	pa0_pwm2: pa0_pwm2 {
+		compatible = "pwm-servo";
+		pwms = <&pwm2 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		min-pulse = <PWM_USEC(700)>;
+		max-pulse = <PWM_USEC(2500)>;
+	};
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};
+
+&timers1 {
+	st,prescaler = <1000>;
+	status = "okay";
+
+	pwm1: pwm {
+		compatible = "st,stm32-pwm";
+		status = "okay";
+		pinctrl-0 = <&tim1_ch1_pwm_out_pa8>;
+		pinctrl-names = "default";
+	};
+};
+
+&timers2 {
+	st,prescaler = <1000>;
+	status = "okay";
+
+	pwm2: pwm {
+		compatible = "st,stm32-pwm";
+		status = "okay";
+		pinctrl-0 = <&tim2_ch1_pwm_out_pa0>;
+		pinctrl-names = "default";
+	};
+};
+
+&usart3 {
+	pinctrl-0 = <&usart3_tx_pb10 &usart3_rx_pb11>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+	status = "okay";
+};

@@ -17,6 +17,7 @@ enum vanchor_cmd_type {
 };
 
 typedef struct {
+	bool step_need_init;
 
 	/*
 	 * The distance

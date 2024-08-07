@@ -81,6 +81,22 @@ char str_upd[] = "UPD";
 char str_cal[] = "CAL";
 char str_ping[] = "PING";
 
+static int vanchor_stepper_init(vanchor_motors_handler_t *mot_hdlr)
+{
+	int ret;
+
+	ret = stepper_set_actual_position(stepper, mot_hdlr->cur_step_pos);
+	if (ret) {
+		LOG_ERR("Failed to set initial position");
+		return ret;
+	}
+
+	/* stepper initialized don't do this again */
+	mot_hdlr->step_need_init = false;
+
+	return 0;
+}
+
 static int vanchor_get_dis2go(vanchor_motors_handler_t *mot_hdlr)
 {
 
@@ -142,6 +158,11 @@ static int vanchor_update_cmd(vanchor_msg_t *cmd,
 	mot_hdlr->cur_dc_speed = cmd->param4;
 	mot_hdlr->cur_dc_rev = cmd->param5;
 
+	if (mot_hdlr->step_need_init) {
+		ret = vanchor_stepper_init(mot_hdlr);
+		if (ret)
+			return ret;
+	}
 
 	ret = vanchor_get_dis2go(mot_hdlr);
 	if (ret)

@@ -23,27 +23,28 @@ typedef struct {
 	 * from the current position
 	 * to the target position.
 	 */
-	int step_dis2go;
+	int32_t step_dis2go;
 
 	/* desired stepper motor values */
-	int des_step_pos;
-	int des_step_speed;
-	int des_step_acc;
+	int32_t des_step_pos;
+	int32_t des_step_speed;
+	int32_t des_step_acc;
 
 	/* desired dc motor values */
-	int des_dc_speed;
+	int32_t des_dc_speed;
 	bool des_dc_rev;
 
 	/* current stepper motor values */
-	int cur_step_pos;
-	int cur_step_speed;
-	int cur_step_acc;
+	int32_t cur_step_pos;
+	int32_t cur_step_speed;
+	int32_t cur_step_acc;
 
 	/* current dc motor values */
-	int cur_dc_speed;
+	int32_t cur_dc_speed;
 	bool cur_dc_rev;
 
 	/* calibration */
-	int calib_begin;
-	int calib_end;
+	int32_t calib_begin;
+	int32_t calib_end;
+
 } vanchor_motors_handler_t;

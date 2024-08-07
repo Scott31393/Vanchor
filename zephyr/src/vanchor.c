@@ -284,6 +284,26 @@ static void irq_handler(const struct device *dev, void *user_data)
 	}
 }
 
+static int vanchor_motors_hdlr_init(void)
+{
+	mot_hdlr.step_need_init = true;
+	mot_hdlr.step_dis2go = 0;
+	mot_hdlr.des_step_pos = 0;
+	mot_hdlr.des_step_speed = 0;
+	mot_hdlr.des_step_acc = 0;
+	mot_hdlr.des_dc_speed = 0;
+	mot_hdlr.des_dc_rev = 0;
+	mot_hdlr.cur_step_pos = 0;
+	mot_hdlr.cur_step_speed = 0;
+	mot_hdlr.cur_step_acc = 0;
+	mot_hdlr.cur_dc_speed = 0;
+	mot_hdlr.cur_dc_rev = 0;
+	mot_hdlr.calib_begin = 0;
+	mot_hdlr.calib_end = 0;
+
+	return 0;
+}
+
 static int vanchor_usb_irq_init(void)
 {
 	int ret;
@@ -399,6 +419,12 @@ int main(void)
 	ret = vanchor_usb_irq_init();
 	if (ret) {
 		LOG_ERR("Error %d: vanchor_usb_irq_init\n", ret);
+		return ret;
+	}
+
+	ret = vanchor_motors_hdlr_init();
+	if (ret) {
+		LOG_ERR("Error %d: vanchor_motors_hdlr_init\n", ret);
 		return ret;
 	}
 

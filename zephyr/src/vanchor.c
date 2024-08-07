@@ -85,7 +85,7 @@ static int vanchor_get_dis2go(vanchor_motors_handler_t *mot_hdlr)
 {
 
 	int ret;
-	int cur;
+	int32_t cur;
 
 	ret = stepper_get_actual_position(stepper, &cur);
 	if (ret)

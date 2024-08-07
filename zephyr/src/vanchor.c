@@ -326,33 +326,6 @@ static int vanchor_usb_irq_init(void)
 	return ret;
 }
 
-__maybe_unused static int vanchor_stepper_init(void)
-{
-	int ret;
-
-	// Set initial position
-	ret = stepper_set_actual_position(stepper, 0);
-	if(ret)
-		return ret;
-
-	// Set target position
-	ret = stepper_set_target_position(stepper, 100);
-	if(ret)
-		return ret;
-
-	// Set maximum velocity
-	ret = stepper_set_max_velocity(stepper, 1); // 1000 steps per second
-	if(ret)
-		return ret;
-
-	// Move stepper motor
-	ret = stepper_move(stepper, 100);
-	if(ret)
-		return ret;
-
-	return 0;
-}
-
 static int vanchor_pwm_init(void)
 {
 	uint32_t pa8_pulse_w = pa8_min_pulse;
@@ -416,12 +389,6 @@ int main(void)
 		LOG_ERR("Error %d: vanchor_pwm_init\n", ret);
 		return ret;
 	}
-
-	// ret = vanchor_stepper_init();
-	// if (ret) {
-	// 	LOG_ERR("Error %d: vanchor_stepper_init\n", ret);
-	// 	return ret;
-	// }
 
 	ret = usb_enable(NULL);
 	if (ret != 0) {

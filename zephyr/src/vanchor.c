@@ -93,6 +93,10 @@ static int vanchor_get_dis2go(vanchor_motors_handler_t *mot_hdlr)
 
 	mot_hdlr->step_dis2go = mot_hdlr->des_step_pos - cur;
 
+	LOG_DBG("Current position (raw): %d", cur);
+	LOG_DBG("Desired position (raw): %d", mot_hdlr->des_step_pos);
+	LOG_DBG("Distance to go (steps): %d", mot_hdlr->step_dis2go);
+
 	return ret;
 }
 

@@ -103,12 +103,6 @@ static int vanchor_get_dis2go(vanchor_motors_handler_t *mot_hdlr)
 static void vanchor_log_motors_status(vanchor_motors_handler_t *mot_hdlr,
 				      char *buffer, size_t buffer_size)
 {
-	int ret;
-
-	ret = vanchor_get_dis2go(mot_hdlr);
-	if (ret)
-		return;
-
 	snprintf(buffer, buffer_size,
 		 "STATUS SSP:%d SDTG:%d MS:%d CB:%d CE:%d\r\n",
 		 mot_hdlr->des_step_pos,
@@ -140,11 +134,18 @@ static int vanchor_calibration_cmd(vanchor_msg_t *cmd)
 static int vanchor_update_cmd(vanchor_msg_t *cmd,
 			      vanchor_motors_handler_t *mot_hdlr)
 {
+	int ret;
+
 	mot_hdlr->cur_step_pos = cmd->param1;
 	mot_hdlr->cur_step_speed = cmd->param2;
 	mot_hdlr->cur_step_acc = cmd->param3;
 	mot_hdlr->cur_dc_speed = cmd->param4;
 	mot_hdlr->cur_dc_rev = cmd->param5;
+
+
+	ret = vanchor_get_dis2go(mot_hdlr);
+	if (ret)
+		return ret;
 
 	LOG_INF("UPD CSP:%d CSS:%d CSA:%d CDS:%d CDR:%d\r\n",
 		 mot_hdlr->cur_step_pos,
@@ -154,7 +155,7 @@ static int vanchor_update_cmd(vanchor_msg_t *cmd,
 		 mot_hdlr->cur_dc_rev);
 
 	if (mot_hdlr->des_step_pos != mot_hdlr->cur_step_pos) {
-		stepper_move(stepper, mot_hdlr->cur_step_pos);
+		stepper_move(stepper, mot_hdlr->step_dis2go);
 		mot_hdlr->des_step_pos = mot_hdlr->cur_step_pos;
 	}
 

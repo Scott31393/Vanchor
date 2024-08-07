@@ -13,8 +13,7 @@ Made a total makeover of the softwre to make it more event based, adding PID and
 
 More pictures comming soon...
 
-<img src="docs/diagram.png" >
-
+<img src="docs/diagram_new.png" >
 ---
 
 **Keep in mind that many aspects of this build can cause fires, chopped of fingers and/or other dangers.**

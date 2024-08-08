@@ -32,7 +32,7 @@
 
 #include "vanchor.h"
 
-LOG_MODULE_REGISTER(motors_ctrl, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(vanchor, LOG_LEVEL_INF);
 
 /* DC/Stepper motors */
 static vanchor_motors_handler_t mot_hdlr;
